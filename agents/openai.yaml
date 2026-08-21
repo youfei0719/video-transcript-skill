@@ -1,4 +1,4 @@
 interface:
   display_name: "视频稿件提取核对"
-  short_description: "Extract and review authorized short-video manuscripts"
-  default_prompt: "Use $video-transcript to extract the actual spoken manuscript from an authorized video source, verify it, and return the complete naturally paragraphed version with only evidence-supported corrections."
+  short_description: "Extract and review complete video manuscripts"
+  default_prompt: "Use $video-transcript to extract the actual spoken manuscript, correct only evidence-supported errors, and return the complete naturally paragraphed version."
