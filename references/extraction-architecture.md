@@ -26,9 +26,11 @@ Every adapter should return:
   "confidence": "high | medium | low",
   "media_retention": "not_received | temporary_deleted | user_retained",
   "status": "ready | needs_review | blocked",
-  "error_code": null
+  "error_code": "AUTHORIZATION_UNCLEAR | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | null"
 }
 ```
+
+For `blocked`, set `text` to `unavailable`; never insert title, hashtags, metadata, a placeholder sentence, or a guessed reconstruction just to fill the contract.
 
 ## Resource Limits and Cleanup
 
