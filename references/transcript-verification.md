@@ -6,7 +6,7 @@ Check each segment against the strongest available evidence, in this order:
 
 1. Audio/video speech and visible captions.
 2. User-supplied subtitles or transcript tied to the same source.
-3. ASR timestamps and confidence.
+3. Codex-native/ASR timestamps and confidence.
 4. OCR text from frames, used as supporting evidence rather than assumed speech.
 5. Context or general knowledge, used only to flag an ambiguity, never to invent a replacement.
 

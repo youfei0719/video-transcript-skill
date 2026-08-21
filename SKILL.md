@@ -1,13 +1,13 @@
 ---
 name: video-transcript
-description: Extract a real video manuscript from an authorized source, context-correct its transcript, and return a naturally paragraphed reviewed version with evidence-bounded corrections. Use for video-to-text extraction and transcript review; do not use for writing-skill generation, creative rewriting, publishing, or platform-access bypass.
+description: Extract a real video manuscript with Codex-native media understanding when available, context-correct it, and return a naturally paragraphed reviewed version with evidence-bounded corrections. Do not require BaoCut, Whisper, local models, or other user-installed ASR software; do not use for creative rewriting, publishing, or platform-access bypass.
 metadata:
   short-description: Extract and verify authorized video manuscripts
 ---
 
 # Video Manuscript Extraction and Verification
 
-This skill has one narrow job: obtain the actual spoken/visible manuscript from an authorized video source, then verify and correct the transcript without inventing missing content.
+This skill has one narrow job: obtain the actual spoken/visible manuscript from an authorized video source using capabilities already available in the Codex session, then verify and correct the transcript without inventing missing content. It is an orchestration and review instruction, not a bundled transcription engine.
 
 ## Required Output
 
@@ -25,9 +25,9 @@ Do not add structure analysis, hook extraction, writing templates, Skill generat
 ## Workflow
 
 1. **Confirm source and authorization.** Accept a user-provided URL, local video/audio, subtitle file, or transcript. Do not bypass login, anti-bot controls, paywalls, regional restrictions, or copyright controls. A title, description, thumbnail, search result, or share text without accessible video/text is not a manuscript.
-2. **Choose the available adapter.** Prefer supplied subtitles/transcript, then local media with an available ASR tool. For a public Douyin URL, run the bundled anonymous Chromium adapter (`scripts/download_public_douyin.py`) before trying `yt-dlp`; it opens the public page in a fresh temporary Chrome profile, resolves the matching signed media URL, and does not require the user's login Cookie. Use an authorized browser/session or another configured connector only when that adapter is unavailable. Inspect the current Codex tools and local binaries before promising extraction; Codex does not imply a persistent server, database, connector, or transcription API.
+2. **Choose the available adapter.** Prefer user-supplied subtitles/transcript. Next use Codex-native audio/video understanding on media the session can actually inspect (an attached file, supported workspace media, or an authorized media connector). For a public Douyin URL, the bundled anonymous Chromium adapter (`scripts/download_public_douyin.py`) may obtain a temporary media file, but downloading alone is not transcription: pass it to a Codex-native media capability only when the current session supports that handoff. Do not ask users to install BaoCut, Whisper, a local model, or any other ASR package. An external ASR service is an optional, explicitly user-approved fallback; if no native capability, supplied text, or approved fallback is available, report `blocked` and state exactly what evidence is missing.
 3. **Create a temporary acquisition workspace.** Keep downloaded video, extracted audio, OCR frames, cookies, and intermediate files outside the final output. Use bounded file sizes/timeouts and clean temporary files on both success and failure. Never put API keys, cookies, browser profiles, or raw media in a repository or skill artifact.
-4. **Extract the raw manuscript.** Preserve the provider and method (`supplied`, `subtitle`, `ASR`, `OCR+ASR`, or other), timestamps when available, language, and confidence. Never overwrite the raw transcript with an AI rewrite.
+4. **Extract the raw manuscript.** Preserve the provider and method (`codex_native`, `supplied`, `subtitle`, `ASR`, `OCR+ASR`, or other), timestamps when available, language, and confidence. Never overwrite the raw transcript with an AI rewrite.
 5. **Run a second-pass review.** Read the full raw transcript in context, then compare suspicious spans with the strongest available evidence. Fix clear ASR semantic errors, homophones, names, numbers, negations, and typos when the audio/subtitle/OCR or immediate sentence context supports the correction. Context may disambiguate a recognition error, but it may not supply a new fact or reconstruct missing speech.
 6. **Create the reviewed manuscript.** Keep every supported spoken idea and the original sequence. Normalize obvious punctuation, remove ASR-only clutter, and split into natural paragraphs by topic, story beat, or speaker turn. Do not polish the author's style, change word choice merely for elegance, merge distinct claims, or silently omit repetition that carries meaning.
 7. **Record corrections and uncertainty.** Log every non-trivial lexical or semantic change with its evidence and confidence. Leave unresolved spans unchanged (or mark them inline) and list them for the user; never present guessed text as verified.
