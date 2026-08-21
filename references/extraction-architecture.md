@@ -10,7 +10,7 @@ This is an adapter guide, not a requirement that Codex reproduce the original pl
 4. **Authorized browser/session**: use only when the user has access to the source. Capture visible captions or an authorized media reference; do not bypass access controls. A browser is an acquisition surface, not an ASR engine.
 5. **No local fallback by default**: do not install or invoke a local ASR runtime, media-processing stack, Python ASR package, or downloaded model weights merely to satisfy this skill. A user-configured local engine may be used only when the user explicitly requests that mode.
 
-If the adapter cannot yield actual speech/text, status is `blocked`. A URL, title, description, thumbnail, or platform metadata is not sufficient evidence.
+If the adapter cannot yield actual speech/text, status is `blocked`. A URL, title, description, thumbnail, or platform metadata is not sufficient evidence. Do not fetch media unless a transcript consumer passed preflight.
 
 ## Common Contract
 
@@ -26,11 +26,12 @@ Every adapter should return:
   "confidence": "high | medium | low",
   "media_retention": "not_received | temporary_deleted | user_retained",
   "status": "ready | needs_review | blocked",
-  "error_code": "AUTHORIZATION_UNCLEAR | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | null"
+  "error_code": "NO_TRANSCRIPT_TOOL | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
+  "next_action": null
 }
 ```
 
-For `blocked`, set `text` to `unavailable`; never insert title, hashtags, metadata, a placeholder sentence, or a guessed reconstruction just to fill the contract.
+For `blocked`, set `text` to `unavailable`, preserve `source_url`, and populate `next_action` with a concrete resumable action. Never insert title, hashtags, metadata, a placeholder sentence, or a guessed reconstruction just to fill the contract.
 
 ## Resource Limits and Cleanup
 

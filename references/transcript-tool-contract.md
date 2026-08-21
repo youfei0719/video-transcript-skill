@@ -1,6 +1,6 @@
 # Transcript Tool Contract
 
-This skill can call a transcript MCP/plugin tool only when one is already available in the current Codex session and the user has approved sending the source to it. The skill must not install a server, download a model, or invent a provider.
+This skill can call a transcript MCP/plugin tool only when one is already available in the current Codex session and the user has approved sending the source to it. The skill must not install a server, download a model, or invent a provider. The tool is the final consumer of temporary media; the skill must not download media first and hope a consumer appears later.
 
 ## Logical Operation
 
@@ -27,7 +27,8 @@ It must return, at minimum:
   "confidence": "high | medium | low",
   "source_url": "optional canonical source",
   "media_retention": "temporary_deleted | user_retained | not_received",
-  "error_code": null
+  "error_code": "NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
+  "next_action": null
 }
 ```
 
@@ -39,5 +40,6 @@ It must return, at minimum:
 - Do not place media, raw transcript, credentials, cookies, or authorization headers in logs, caches, backups, or repository files.
 - Return timestamps and confidence when the provider supports them. A prose-only response is lower-confidence and must not be reported as fully verified solely because it is long.
 - Return `blocked` or `needs_review` when media is inaccessible, speech is missing, or retention/authorization requirements cannot be met.
+- When blocked, return a concrete resumable action such as `{\"type\":\"provide_evidence\",\"prompt\":\"请上传 .srt、.vtt、.txt 或本地音视频文件\",\"accepted_inputs\":[\".srt\",\".vtt\",\".txt\",\"local audio/video\"]}`.
 
 The skill may continue to semantic review only after receiving actual speech text. It must never treat a title, description, hashtags, thumbnail, OCR-only text, or a failed tool message as the transcript.

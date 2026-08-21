@@ -67,7 +67,7 @@ Only `accepted` corrections become part of `manuscript.reviewed`. Keep `proposed
 - The result is empty, truncated, or too low quality to compare.
 - Required local tools or an authorized browser/session are unavailable.
 
-Return `manuscript.raw` and `manuscript.reviewed` as `unavailable`, not fabricated text. Use `AUTHORIZATION_UNCLEAR` when the access/reuse basis is absent, `NO_ADAPTER` when no authorized subtitle/media/transcript path is available, and `NO_TRANSCRIPT_EVIDENCE` when an adapter returned no actual speech text.
+Return `manuscript.raw` and `manuscript.reviewed` as `unavailable`, not fabricated text. Use `NO_TRANSCRIPT_TOOL` when the session has no callable transcript consumer, `NO_ADAPTER` when no authorized subtitle/media/transcript path is available, `NO_TRANSCRIPT_EVIDENCE` when an adapter returned no actual speech text, and `MEDIA_UNREADABLE` when the selected media cannot be decoded. Include a concrete resumable `next_action` with accepted inputs; do not ask the user to repeat the URL.
 
 ## Minimal Case Files
 
