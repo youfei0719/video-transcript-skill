@@ -6,7 +6,7 @@ This is an adapter guide, not a requirement that Codex reproduce the original pl
 
 1. **Supplied transcript/subtitles**: highest reliability and lowest permission cost. Preserve the supplied text and filename/source label.
 2. **Codex-native media understanding**: use the audio/video understanding capability already exposed by the current Codex session for an attached file, supported workspace media, or authorized connector. No user installation is required.
-3. **Configured transcript tool**: use an available `transcribe_media`/equivalent tool only after source-specific consent. It should accept a temporary media reference or file, return structured transcript evidence, and delete the media according to `transcript-tool-contract.md`.
+3. **Configured transcript tool**: use an available `transcribe_media`/equivalent tool only after source-specific consent. The recommended implementation is an MCP bridge to the official OpenAI file transcription API; it should accept a temporary media reference or file, return structured transcript evidence, and delete the media according to `transcript-tool-contract.md`.
 4. **Authorized browser/session**: use only when the user has access to the source. Capture visible captions or an authorized media reference; do not bypass access controls. A browser is an acquisition surface, not an ASR engine.
 5. **No local fallback by default**: do not install or invoke a local ASR runtime, media-processing stack, Python ASR package, or downloaded model weights merely to satisfy this skill. A user-configured local engine may be used only when the user explicitly requests that mode.
 
@@ -26,7 +26,7 @@ Every adapter should return:
   "confidence": "high | medium | low",
   "media_retention": "not_received | temporary_deleted | user_retained",
   "status": "ready | needs_review | blocked",
-  "error_code": "NO_TRANSCRIPT_TOOL | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
+  "error_code": "NO_TRANSCRIPT_TOOL | PROVIDER_NOT_CONFIGURED | PROVIDER_AUTH_REQUIRED | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
   "next_action": null
 }
 ```

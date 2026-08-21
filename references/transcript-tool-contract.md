@@ -27,7 +27,7 @@ It must return, at minimum:
   "confidence": "high | medium | low",
   "source_url": "optional canonical source",
   "media_retention": "temporary_deleted | user_retained | not_received",
-  "error_code": "NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
+  "error_code": "PROVIDER_NOT_CONFIGURED | PROVIDER_AUTH_REQUIRED | NO_TRANSCRIPT_EVIDENCE | MEDIA_UNREADABLE | null",
   "next_action": null
 }
 ```
