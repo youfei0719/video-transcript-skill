@@ -6,9 +6,9 @@ This is an adapter guide, not a requirement that Codex reproduce the original pl
 
 1. **Supplied transcript/subtitles**: highest reliability and lowest permission cost. Preserve the supplied text and filename/source label.
 2. **Codex-native media understanding**: use the audio/video understanding capability already exposed by the current Codex session for an attached file, supported workspace media, or authorized connector. No user installation is required.
-3. **Public Douyin URL**: run `scripts/download_public_douyin.py <url> --output <temporary>.mp4` only to acquire authorized temporary media. It uses a fresh anonymous Chromium profile, loads the public page, requests the matching `aweme_detail` response inside that page, extracts HTTPS `play_addr`/`download_addr`/bit-rate URLs, validates the video ID and byte ranges, and downloads with the page URL as `Referer`. It does not read the user's browser profile or require a login Cookie. A downloaded file must still be handed to a Codex-native media capability or an explicitly approved configured service; if neither is available, stop as `blocked` rather than asking for an installation.
-4. **Authorized browser/session**: use only when the user has access and the native capability or bundled public adapter is unavailable. Capture visible captions or an authorized media reference; do not bypass access controls.
-5. **External ASR**: use only when the user explicitly supplies or approves an already configured service. Do not install packages, download model weights, or silently send media to a third party.
+3. **Configured transcript tool**: use an available `transcribe_media`/equivalent tool only after source-specific consent. It should accept a temporary media reference or file, return structured transcript evidence, and delete the media according to `transcript-tool-contract.md`.
+4. **Authorized browser/session**: use only when the user has access to the source. Capture visible captions or an authorized media reference; do not bypass access controls. A browser is an acquisition surface, not an ASR engine.
+5. **No local fallback by default**: do not install or invoke a local ASR runtime, media-processing stack, Python ASR package, or downloaded model weights merely to satisfy this skill. A user-configured local engine may be used only when the user explicitly requests that mode.
 
 If the adapter cannot yield actual speech/text, status is `blocked`. A URL, title, description, thumbnail, or platform metadata is not sufficient evidence.
 
@@ -22,17 +22,19 @@ Every adapter should return:
   "source_label": "human-readable label",
   "text": "actual supplied or transcribed text",
   "timestamps": [],
-  "provider": "codex_native | supplied | subtitle | ASR | OCR+ASR | other",
+  "provider": "codex_native | supplied | subtitle | remote_transcript | ASR | OCR+ASR | other",
   "confidence": "high | medium | low",
   "media_retention": "not_received | temporary_deleted | user_retained",
   "status": "ready | needs_review | blocked",
-  "error_code": null
+  "error_code": "AUTHORIZATION_UNCLEAR | NO_ADAPTER | NO_TRANSCRIPT_EVIDENCE | null"
 }
 ```
 
+For `blocked`, set `text` to `unavailable`; never insert title, hashtags, metadata, a placeholder sentence, or a guessed reconstruction just to fill the contract.
+
 ## Resource Limits and Cleanup
 
-When implementing an adapter, bound request size, media/audio size, download/FFmpeg/transcription time, and concurrent work. Validate content type and ranged responses when downloading. Use private permissions for temporary cookie jars. Put cleanup in a `finally`/defer path and verify that the directory is gone before reporting success.
+When implementing an adapter, bound request size, media/audio size, processing time, and concurrent work. Validate content type and redirects when retrieving media. Put cleanup in a `finally`/defer path and verify that the temporary media is gone before reporting success.
 
 ## Transcript Quality
 
